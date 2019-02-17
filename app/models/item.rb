@@ -1,5 +1,5 @@
 class Item < ApplicationRecord
-  #belongs_to :seller, primary_key: 'seller_id', optional: true
+  belongs_to :shop, primary_key: 'shop_id', optional: true
 
   require 'typhoeus'
   require 'open-uri'
@@ -7,6 +7,7 @@ class Item < ApplicationRecord
   require 'extension/string'
 
   def self.search(user, search_url, shop_id)
+    @account = Account.find_or_create_by(user: user)
     case shop_id
     when 1 then
       #楽天市場
@@ -26,10 +27,17 @@ class Item < ApplicationRecord
         item_list = Array.new
         return if results[0] == nil
         counter = 0
+        if @account.current_page == 0 then
+          @account.update(
+            max_item_num: @account.max_page * results.count
+          )
+        end
+        res = Hash.new
+
         results.each do |result|
           counter += 1
           logger.debug('---------- No. ' + counter.to_s + ' -----------')
-          res = Hash.new
+
           url = result.xpath('.//a[@target="_top"]')[0][:href]
           item_id = url.gsub('https://item.rakuten.co.jp/','').gsub('/','_')
           if item_id.end_with?("_") then
@@ -63,8 +71,8 @@ class Item < ApplicationRecord
             jan = nil
           end
 
-          name = page.xpath('//span[@class="item_name"]')[0]
-          name = name.inner_text if name != nil
+          name = page.xpath('//input[@name="item_name"]')[0]
+          name = name[:value] if name != nil
           if jan != nil then
             keyword = jan
           else
@@ -88,21 +96,26 @@ class Item < ApplicationRecord
             shop_id: shop_id,
             keyword: keyword
           }
+          logger.debug(res)
           item_list << Item.new(res)
-          logger.debug('---------------------------')
-
-          #return if counter > 2
+          logger.debug('----------------------------')
         end
-        if item_list[0] != nil then
-          targets = item_list[0].keys
-          targets.shift(2)
-          Item.import item_list, on_duplicate_key_update: {constraint_name: :index_items_on_user_and_item_id, columns: targets}
+        if res != nil then
+          targets = res.keys.shift(1)
+          Item.import item_list, on_duplicate_key_update: {constraint_name: :for_upsert_items, columns: targets}
+          cnum = @account.current_item_num + 1
+          @account.update(
+            current_item_num: cnum
+          )
         end
       end
+
+      max_page = @account.max_page + 1
       next_url = doc.xpath('//a[@class="item -next nextPage"]')
       if next_url != nil then
         next_url = next_url[0][:href]
-        #self.search(next_url, shop_id)
+        if next_url.include?('p=' + max_page.to_s) then return end
+        self.search(next_url, shop_id)
       end
     when 2 then
       #ヤフオク

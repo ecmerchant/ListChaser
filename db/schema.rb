@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_02_17_104511) do
+ActiveRecord::Schema.define(version: 2019_02_17_155127) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -21,6 +21,9 @@ ActiveRecord::Schema.define(version: 2019_02_17_104511) do
     t.string "mws_auth_token"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "current_item_num", default: 0
+    t.integer "max_page", default: 10
+    t.integer "max_item_num", default: 100
   end
 
   create_table "items", force: :cascade do |t|
@@ -38,7 +41,15 @@ ActiveRecord::Schema.define(version: 2019_02_17_104511) do
     t.text "keyword"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["user", "item_id"], name: "index_items_on_user_and_item_id", unique: true
+    t.index ["user", "item_id"], name: "for_upsert_items", unique: true
+  end
+
+  create_table "shops", force: :cascade do |t|
+    t.integer "shop_id"
+    t.text "name"
+    t.string "root"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "users", force: :cascade do |t|

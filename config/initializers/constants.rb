@@ -8,9 +8,6 @@ module Constants
     name: "商品名",
     price: "仕入価格",
     jan: "JAN",
-    mpn: "型番",
-    category_id: "カテゴリ",
-    decription: "商品説明",
     keyword: "検索用キー"
   }
 

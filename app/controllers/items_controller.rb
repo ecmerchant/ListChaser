@@ -4,6 +4,7 @@ class ItemsController < ApplicationController
     user = current_user.email
     @items = Item.where(user: user)
     @headers = Constants::HITEM
+    @account = Account.find_or_create_by(user: user)
     if request.post? then
       search_url = params[:input_url]
       return if search_url == nil
@@ -18,9 +19,11 @@ class ItemsController < ApplicationController
         logger.debug("========= Yahoo! ==========")
         shop_id = 2
       end
-
-      Item.search(user, search_url, shop_id)
-
+      @account.update(
+        current_item_num: 0
+      )
+      ItemSearchJob.perform_later(user, search_url, shop_id)
+      #Item.search(user, search_url, shop_id)
     end
 
   end
