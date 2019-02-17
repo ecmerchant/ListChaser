@@ -8,18 +8,22 @@ class Item < ApplicationRecord
 
   def self.search(user, search_url, shop_id)
     @account = Account.find_or_create_by(user: user)
+    option = Hash.new
+    option['User-Agent'] = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/72.0.3626.109 Safari/537.36'
+    
     case shop_id
     when 1 then
       #楽天市場
+=begin
       response = Typhoeus.get(search_url, followlocation: true)
       html = response.body
-=begin
+=end
+
       charset = nil
-      html = open(search_url) do |f|
+      html = open(search_url, option) do |f|
         charset = f.charset
         f.read
       end
-=end
       doc = Nokogiri::HTML.parse(html)
       temp = doc.xpath('//div[@class="dui-cards searchresultitems"]')
       if temp !=nil then
@@ -47,15 +51,15 @@ class Item < ApplicationRecord
           image = result.xpath('.//img[@class="_verticallyaligned"]')[0][:src]
 
           #個別ページにアクセス
-=begin
-          page = open(url) do |f|
+
+          page = open(url, option) do |f|
             charset = f.charset
             f.read
           end
-=end
+=begin
           response = Typhoeus.get(url, followlocation: true)
           page = response.body
-
+=end
           page = Nokogiri::HTML.parse(page)
 
           price = page.xpath('//input[@id="ratPrice"]')[0]
