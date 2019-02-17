@@ -11,14 +11,15 @@ class Item < ApplicationRecord
     case shop_id
     when 1 then
       #楽天市場
-      #response = Typhoeus.get(search_url, followlocation: true)
-      #html = response.body
+      response = Typhoeus.get(search_url, followlocation: true)
+      html = response.body
+=begin
       charset = nil
       html = open(search_url) do |f|
         charset = f.charset
         f.read
       end
-
+=end
       doc = Nokogiri::HTML.parse(html)
       temp = doc.xpath('//div[@class="dui-cards searchresultitems"]')
       if temp !=nil then
@@ -46,10 +47,15 @@ class Item < ApplicationRecord
           image = result.xpath('.//img[@class="_verticallyaligned"]')[0][:src]
 
           #個別ページにアクセス
+=begin
           page = open(url) do |f|
             charset = f.charset
             f.read
           end
+=end
+          response = Typhoeus.get(url, followlocation: true)
+          page = response.body
+
           page = Nokogiri::HTML.parse(page)
 
           price = page.xpath('//input[@id="ratPrice"]')[0]
