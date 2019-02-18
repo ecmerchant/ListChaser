@@ -8,9 +8,8 @@ class Item < ApplicationRecord
 
   def self.search(user, search_url, shop_id)
     @account = Account.find_or_create_by(user: user)
-    option = Hash.new
-    option['User-Agent'] = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/72.0.3626.109 Safari/537.36'
-    
+    user_agent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/72.0.3626.109 Safari/537.36'
+
     case shop_id
     when 1 then
       #楽天市場
@@ -19,8 +18,8 @@ class Item < ApplicationRecord
       html = response.body
 =end
 
-      charset = nil
-      html = open(search_url, option) do |f|
+
+      html = open(search_url, "User-Agent" => user_agent) do |f|
         charset = f.charset
         f.read
       end
