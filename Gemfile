@@ -93,3 +93,6 @@ gem 'rubyXL'
 # gem for pagination
 gem 'kaminari'
 gem 'kaminari-bootstrap'
+
+# gem for rakuten-API
+gem 'rakuten_web_service'

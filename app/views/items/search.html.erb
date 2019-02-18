@@ -7,8 +7,8 @@
           <%= form_tag('/items/search', method:'post', id:'items_search') do %>
             <div class="form-inline">
               <div class="form-group">
-                <label>検索用URL</label>
-                <%= text_field_tag('input_url', nil,  class: 'form-control', style: 'margin-left:10px; margin-right:20px;') %>
+                <label>検索用キーワード</label>
+                <%= text_field_tag('input_key', nil,  class: 'form-control', style: 'margin-left:10px; margin-right:20px;') %>
               </div>
               <%= submit_tag '取得開始', class: 'btn btn-info' %>
             </div>
@@ -16,14 +16,15 @@
         </div>
         <br>
         進行状況
-        <div class="progress" style="width: 40%;">
-          <div class="progress-bar progress-bar-striped active" id="progress_bar" role="progressbar" style="width: 0%;">
+        <div class="progress" style="width: 60%;">
+          <div class="progress-bar progress-bar-striped active" id="progress_bar" role="progressbar" style="width: <%= ((@account.current_item_num * 100) / @account.max_item_num).round(0) %>%;">
             <%= ((@account.current_item_num * 100) / @account.max_item_num).round(0) %>%
           </div>
         </div>
 
         <br>
-        <h5>取得済み件数　全<%= @items.count.to_i %>件</h5>
+        <h5>取得済み件数　全<%= @total.to_i %>件</h5>
+        <%= paginate @items %>
         <table class="table table-striped table-hover table-bordered ellipsis" id="item_table">
           <thead class="thead-light">
             <tr>
@@ -38,7 +39,7 @@
               <% @headers.each do |key, value| %>
                 <% case key %>
                 <% when :image then %>
-                <td class="td_vertical_align_middle"><%= image_tag(temp[key], height:'70px') %></td>
+                <td class="td_vertical_align_middle"><%= if temp[key] != nil then image_tag(temp[key], height:'70px') end %></td>
                 <% when :shop_id then %>
                 <td class="td_vertical_align_middle"><%= temp.shop.name %></td>
                 <% when :url then %>
