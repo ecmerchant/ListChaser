@@ -2,7 +2,7 @@ class AddUniqueToItems < ActiveRecord::Migration[5.2]
   def up
     execute <<-SQL
       ALTER TABLE items
-        ADD CONSTRAINT for_upsert_items UNIQUE ("user", "item_id");
+        ADD CONSTRAINT for_upsert_items UNIQUE ("item_id");
     SQL
   end
 

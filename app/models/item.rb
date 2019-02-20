@@ -29,10 +29,13 @@ class Item < ApplicationRecord
           )
         end
         res = Hash.new
+        jans = []
 
         while results.has_next_page?
           checker = Hash.new
           item_list = Array.new
+          user_list = Array.new
+
           results.each do |result|
 
             logger.debug('---------- No. ' + (counter + 1).to_s + ' -----------')
@@ -42,12 +45,15 @@ class Item < ApplicationRecord
             name = result['itemName']
             price = result['itemPrice']
 
-            code = url.gsub('https://item.rakuten.co.jp/','').gsub('/','_')
+            code = url.gsub('https://item.rakuten.co.jp/','')
+            code = /\/([\s\S]*?)\//.match(code)[1]
+            logger.debug(code)
             if code.end_with?("_") then
               code.chop!
             end
             if code.jan? then
               jan = code
+              jans.push(jan)
             else
               jan = nil
             end
@@ -62,7 +68,6 @@ class Item < ApplicationRecord
             mpn = nil
 
             res = {
-              user: user,
               item_id: item_id,
               name: name,
               price: price,
@@ -76,8 +81,10 @@ class Item < ApplicationRecord
               keyword: keyword
             }
             logger.debug(item_id)
+
             if checker.key?(item_id) == false then
               item_list << Item.new(res)
+              user_list << List.new({user: user, item_id: item_id, status: 'before_sale'})
               checker[item_id] = name
               counter += 1
             end
@@ -85,8 +92,15 @@ class Item < ApplicationRecord
           end
           page += 1
           if res != nil then
-            targets = res.keys.shift(1)
+
+            logger.debug('!!check!!')
+            Product.search(user, jans, 'jan')
+
+            targets = res.keys
+            targets.delete(:item_id)
+
             Item.import item_list, on_duplicate_key_update: {constraint_name: :for_upsert_items, columns: targets}
+            List.import user_list, on_duplicate_key_ignore: {constraint_name: :for_upsert_lists}
             @account.update(
               current_item_num: page
             )

@@ -1,0 +1,11 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  original_key: MyText
+  key_type: MyString
+  product_id: MyString
+
+two:
+  original_key: MyText
+  key_type: MyString
+  product_id: MyString

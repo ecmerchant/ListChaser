@@ -2,9 +2,11 @@ require 'resque/server'
 
 Rails.application.routes.draw do
 
+  get 'accounts/setup'
+  post 'accounts/setup'
+
   get 'items/search'
   post 'items/search'
-
 
   root to: 'items#search'
 

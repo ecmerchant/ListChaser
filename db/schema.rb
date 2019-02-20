@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_02_17_155127) do
+ActiveRecord::Schema.define(version: 2019_02_20_164119) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -24,10 +24,19 @@ ActiveRecord::Schema.define(version: 2019_02_17_155127) do
     t.integer "current_item_num", default: 0
     t.integer "max_page", default: 10
     t.integer "max_item_num", default: 100
+    t.string "rakuten_app_id"
+  end
+
+  create_table "converters", force: :cascade do |t|
+    t.text "original_key"
+    t.string "key_type"
+    t.string "product_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["original_key", "product_id"], name: "for_upsert_converters", unique: true
   end
 
   create_table "items", force: :cascade do |t|
-    t.string "user"
     t.string "item_id"
     t.string "shop_id"
     t.string "url"
@@ -41,7 +50,36 @@ ActiveRecord::Schema.define(version: 2019_02_17_155127) do
     t.text "keyword"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["user", "item_id"], name: "for_upsert_items", unique: true
+    t.index ["item_id"], name: "for_upsert_items", unique: true
+  end
+
+  create_table "lists", force: :cascade do |t|
+    t.string "user"
+    t.string "item_id"
+    t.string "product_id"
+    t.string "status"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user", "item_id"], name: "for_upsert_lists", unique: true
+  end
+
+  create_table "products", force: :cascade do |t|
+    t.string "product_id"
+    t.text "name"
+    t.string "image"
+    t.string "url"
+    t.integer "cart_price"
+    t.integer "cart_shipping"
+    t.integer "cart_point"
+    t.integer "new_price"
+    t.integer "new_shipping"
+    t.integer "new_point"
+    t.integer "used_price"
+    t.integer "used_shipping"
+    t.integer "used_point"
+    t.float "amazon_fee"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "shops", force: :cascade do |t|

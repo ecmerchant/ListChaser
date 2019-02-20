@@ -28,6 +28,9 @@
         <table class="table table-striped table-hover table-bordered ellipsis" id="item_table">
           <thead class="thead-light">
             <tr>
+              <th style="text-align:center;">出品</th>
+              <th style="text-align:center;">候補ASIN</th>
+              <th style="text-align:center;">アマゾン画像</th>
               <% @headers.each do |key, value| %>
               <th style="text-align:center;"><%= value %></th>
               <% end %>
@@ -36,16 +39,19 @@
           <tbody>
             <% @items.each do |temp| %>
             <tr>
+              <td class="td_vertical_align_middle"></td>
+              <td class="td_vertical_align_middle"><%= if @converter.find_by(original_key: temp.item.jan) != nil then @converter.find_by(original_key: temp.item.jan).product_id else nil end %></td>
+              <td class="td_vertical_align_middle"></td>
               <% @headers.each do |key, value| %>
                 <% case key %>
                 <% when :image then %>
-                <td class="td_vertical_align_middle"><%= if temp[key] != nil then image_tag(temp[key], height:'70px') end %></td>
+                <td class="td_vertical_align_middle"><%= if temp.item[key] != nil then image_tag(temp.item[key], height:'70px') end %></td>
                 <% when :shop_id then %>
-                <td class="td_vertical_align_middle"><%= temp.shop.name %></td>
+                <td class="td_vertical_align_middle"><%= temp.item.shop.name %></td>
                 <% when :url then %>
-                <td class="td_vertical_align_middle"><%= link_to temp[key], temp[key], target: '_blank' %></td>
+                <td class="td_vertical_align_middle"><%= link_to temp.item[key], temp.item[key], target: '_blank' %></td>
                 <% else %>
-                <td class="td_vertical_align_middle"><%= temp[key] %></td>
+                <td class="td_vertical_align_middle"><%= temp.item[key] %></td>
                 <% end %>
               <% end %>
             </tr>

@@ -1,0 +1,33 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  product_id: MyString
+  name: MyText
+  image: MyString
+  url: MyString
+  cart_price: 1
+  cart_shipping: 1
+  cart_point: 1
+  new_price: 1
+  new_shipping: 1
+  new_point: 1
+  used_price: 1
+  used_shipping: 1
+  used_point: 1
+  amazon_fee: 1.5
+
+two:
+  product_id: MyString
+  name: MyText
+  image: MyString
+  url: MyString
+  cart_price: 1
+  cart_shipping: 1
+  cart_point: 1
+  new_price: 1
+  new_shipping: 1
+  new_point: 1
+  used_price: 1
+  used_shipping: 1
+  used_point: 1
+  amazon_fee: 1.5
