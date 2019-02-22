@@ -2,6 +2,7 @@ require 'resque/server'
 
 Rails.application.routes.draw do
 
+  get 'products/check'
   get 'accounts/setup'
   post 'accounts/setup'
 

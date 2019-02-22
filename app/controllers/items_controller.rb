@@ -46,7 +46,7 @@ class ItemsController < ApplicationController
         end
       end
     end
-    redirect_to root_path
+    redirect_to products_check_path
   end
 
 end

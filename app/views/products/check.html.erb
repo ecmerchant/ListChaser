@@ -1,0 +1,85 @@
+<div class="container">
+  <div class="page-header" id="banner">
+    <div class="row my-4">
+      <div class="col-12">
+        <h3>出品情報の確認</h3>
+        <div class="form-inline">
+          <%= form_tag('/products/check', method:'post', id:'product_check') do %>
+            <div class="form-inline">
+              <%= submit_tag '出品', class: 'btn btn-info',style: 'margin-left:10px; margin-right:20px;' %>
+            </div>
+          <% end %>
+        </div>
+        <br>
+
+        <h5>対象件数　全<%= @total.to_i %>件</h5>
+
+        <table class="table table-striped table-hover table-bordered ellipsis" id="item_table">
+          <thead class="thead-light">
+            <tr>
+              <th>No.</th>
+              <th>タイプ</th>
+              <th>出品</th>
+              <th>画像</th>
+              <th>価格</th>
+              <th>価格差</th>
+              <th>商品名</th>
+              <th>商品番号</th>
+              <th>JAN</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @items.each_with_index do |temp, index| %>
+            <tr>
+              <% check_status = false %>
+              <% if temp.status == 'before_listing' then check_status = true end %>
+              <td class="td_vertical_align_middle" rowspan="2"><%= index + 1 %></td>
+              <td class="td_vertical_align_middle">楽天市場</td>
+              <td class="td_vertical_align_middle" rowspan="2"><%= check_box_tag 'checked[' + temp.item_id + ']', true, check_status, :style => 'width: 20px; height: 20px;' %></td>
+              <td class="td_vertical_align_middle" style="padding:1px;"><%= if temp.item.image != nil then image_tag(temp.item.image, height:'40px') end %></td>
+              <td class="td_vertical_align_middle"><%= temp.item.price %></td>
+              <td class="td_vertical_align_middle" rowspan="2"><%= temp.profit %></td>
+              <td class="td_vertical_align_middle"><%= link_to truncate(temp.item.name), temp.item.url,  target: '_blank' %></td>
+              <td class="td_vertical_align_middle"><%= temp.item.item_id %></td>
+              <td class="td_vertical_align_middle" rowspan="2"><%= temp.item.jan %></td>
+            </tr>
+            <tr>
+              <td class="td_vertical_align_middle">アマゾン</td>
+              <% if temp.item.converter != nil then %>
+                <% if temp.item.converter.product != nil then %>
+                  <% amazon_price = temp.item.converter.product.new_price + temp.item.converter.product.new_shipping - temp.item.converter.product.new_point %>
+                  <td class="td_vertical_align_middle" style="padding:1px;"><%= if temp.item.converter.product.image != nil then image_tag(temp.item.converter.product.image, height:'40px') end %></td>
+                  <td class="td_vertical_align_middle"><%= amazon_price %></td>
+                  <td class="td_vertical_align_middle"><%= link_to truncate(temp.item.converter.product.name), temp.item.converter.product.url,  target: '_blank' %></td>
+                  <td class="td_vertical_align_middle"><%= temp.item.converter.product.product_id %></td>
+                <% else %>
+                  <td class="td_vertical_align_middle"></td>
+                  <td class="td_vertical_align_middle"></td>
+                  <td class="td_vertical_align_middle"></td>
+                  <td class="td_vertical_align_middle"></td>
+                <% end %>
+              <% else %>
+                <td class="td_vertical_align_middle"></td>
+                <td class="td_vertical_align_middle"></td>
+                <td class="td_vertical_align_middle"></td>
+                <td class="td_vertical_align_middle"></td>
+              <% end %>
+            </tr>
+            <% end %>
+          </tbody>
+        </table>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script type="text/javascript">
+  $(document).ready(function(){
+    $('#download_template').on('click', function() {
+      setTimeout(function(){
+          location.href = '/products/show';
+      },1000);
+    });
+  });
+</script>
