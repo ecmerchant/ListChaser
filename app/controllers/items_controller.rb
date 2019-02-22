@@ -3,8 +3,8 @@ class ItemsController < ApplicationController
   def search
     @login_user = current_user
     user = current_user.email
-    @items = List.where(user: user, status:'before_sale').order('product_id ASC NULLS LAST').page(params[:page]).per(PER)
-    @total = List.where(user: user, status:'before_sale').count
+    @items = List.where(user: user).where('(status = ?) OR (status = ?)', 'searching', 'before_listing').order('product_id DESC NULLS LAST').order('profit DESC NULLS LAST').page(params[:page]).per(PER)
+    @total = List.where(user: user, status:'searching').count
     @headers = Constants::HITEM
     @account = Account.find_or_create_by(user: user)
     @converter = Converter.all
@@ -29,6 +29,24 @@ class ItemsController < ApplicationController
       ItemSearchJob.perform_later(user, keyword, shop_id)
       #Item.search(user, keyword, shop_id)
     end
-
   end
+
+  def select
+    if request.post? then
+      logger.debug(params)
+      user = current_user.email
+      temp = List.where(user: user)
+      targets = params[:checked]
+      if targets != nil then
+        targets.each do |key, value|
+          item_id = key
+          temp.find_by(item_id: item_id).update(
+            status: 'before_listing'
+          )
+        end
+      end
+    end
+    redirect_to root_path
+  end
+
 end

@@ -7,6 +7,7 @@ Rails.application.routes.draw do
 
   get 'items/search'
   post 'items/search'
+  post 'items/select'
 
   root to: 'items#search'
 

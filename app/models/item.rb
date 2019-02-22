@@ -13,6 +13,12 @@ class Item < ApplicationRecord
     case shop_id
     when 1 then
       #楽天市場 API
+
+      titem = Item.all
+      List.where(user: user, status: 'searching').update(
+        status: 'before_sale'
+      )
+
       RakutenWebService.configure do |c|
         c.application_id = ENV['RAKUTEN_APP_ID']
       end
@@ -36,6 +42,7 @@ class Item < ApplicationRecord
           checker = Hash.new
           item_list = Array.new
           user_list = Array.new
+          uhash = Hash.new
 
           results.each do |result|
 
@@ -85,7 +92,7 @@ class Item < ApplicationRecord
 
             if checker.key?(item_id) == false then
               item_list << Item.new(res)
-              user_list << List.new({user: user, item_id: item_id, status: 'before_sale'})
+              uhash[item_id] = {user: user, item_id: item_id, status: 'searching'}
               checker[item_id] = name
               counter += 1
             end
@@ -97,11 +104,34 @@ class Item < ApplicationRecord
             logger.debug('!!check!!')
             Product.search(user, jans, 'jan')
 
+            uhash.each do |key, value|
+              tt = Item.find_by(item_id: key)
+              if tt.converter != nil then
+                ptemp = tt.converter.product
+                if ptemp != nil then
+                  pid = ptemp.product_id
+                  price = ptemp.new_price + ptemp.new_point - ptemp.new_shipping
+                  profit = (price.to_f * (1.0 - ptemp.amazon_fee) - tt.price.to_f).round(0)
+                else
+                  pid = nil
+                  profit = 0
+                end
+              else
+                pid = nil
+                profit = 0
+              end
+
+              buf = value
+              buf[:product_id] = pid
+              buf[:profit] = profit
+              user_list << List.new(buf)
+            end
+
             targets = res.keys
             targets.delete(:item_id)
 
             Item.import item_list, on_duplicate_key_update: {constraint_name: :for_upsert_items, columns: targets}
-            List.import user_list, on_duplicate_key_ignore: {constraint_name: :for_upsert_lists}
+            List.import user_list, on_duplicate_key_update: {constraint_name: :for_upsert_lists, columns: [:status, :product_id, :profit]}
             @account.update(
               current_item_num: page
             )
