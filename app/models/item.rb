@@ -1,5 +1,6 @@
 class Item < ApplicationRecord
   belongs_to :shop, primary_key: 'shop_id', optional: true
+  belongs_to :converter, primary_key: 'keyword', foreign_key: 'keyword'
 
   require 'activerecord-import'
   require 'extension/string'

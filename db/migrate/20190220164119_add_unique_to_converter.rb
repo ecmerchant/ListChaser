@@ -2,7 +2,7 @@ class AddUniqueToConverter < ActiveRecord::Migration[5.2]
   def up
     execute <<-SQL
       ALTER TABLE converters
-        ADD CONSTRAINT for_upsert_converters UNIQUE ("original_key", "product_id");
+        ADD CONSTRAINT for_upsert_converters UNIQUE ("keyword", "product_id");
     SQL
   end
 

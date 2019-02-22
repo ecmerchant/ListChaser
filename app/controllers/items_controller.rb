@@ -3,11 +3,11 @@ class ItemsController < ApplicationController
   def search
     @login_user = current_user
     user = current_user.email
-    @items = List.where(user: user, status:'before_sale').page(params[:page]).per(PER)
-    @total = List.where(user: user).count
+    @items = List.where(user: user, status:'before_sale').order('product_id ASC NULLS LAST').page(params[:page]).per(PER)
+    @total = List.where(user: user, status:'before_sale').count
     @headers = Constants::HITEM
     @account = Account.find_or_create_by(user: user)
-    @converter = Converter.all 
+    @converter = Converter.all
     if request.post? then
       keyword = params[:input_key]
       return if keyword == nil

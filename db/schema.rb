@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_02_20_164119) do
+ActiveRecord::Schema.define(version: 2019_02_21_235807) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -28,12 +28,12 @@ ActiveRecord::Schema.define(version: 2019_02_20_164119) do
   end
 
   create_table "converters", force: :cascade do |t|
-    t.text "original_key"
+    t.text "keyword"
     t.string "key_type"
     t.string "product_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["original_key", "product_id"], name: "for_upsert_converters", unique: true
+    t.index ["keyword", "product_id"], name: "for_upsert_converters", unique: true
   end
 
   create_table "items", force: :cascade do |t|
@@ -80,6 +80,7 @@ ActiveRecord::Schema.define(version: 2019_02_20_164119) do
     t.float "amazon_fee"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["product_id"], name: "for_upsert_products", unique: true
   end
 
   create_table "shops", force: :cascade do |t|
