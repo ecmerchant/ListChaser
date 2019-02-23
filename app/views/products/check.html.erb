@@ -4,12 +4,13 @@
       <div class="col-12">
         <h3>出品情報の確認</h3>
         <div class="form-inline">
-          <%= form_tag('/products/check', method:'post', id:'product_check') do %>
+        <%= form_tag('/products/check', method:'post', id:'product_check') do %>
             <div class="form-inline">
-              <%= submit_tag 'MWSアップロード', class: 'btn btn-info',style: 'margin-right:20px;' %>
+              <%= submit_tag 'データ更新', class: 'btn btn-info', style: 'margin-right:20px;', id: 'data_update' %>
+              <%= submit_tag 'MWSアップロード', class: 'btn btn-secondary', style: 'margin-right:20px;', id: 'mws_upload' %>
               <%= link_to "txtファイル出力", products_csv_download_path(format: :csv), class: "btn btn-primary" %>
             </div>
-          <% end %>
+
         </div>
         <br>
 
@@ -29,12 +30,17 @@
             <% @body.each do |row| %>
             <tr>
               <% @headers[2].each do |col| %>
+              <% if col == 'price' then %>
+              <td class="td_vertical_align_middle"><%= text_field_tag 'text[' + row['sku'] + ']', row[col], class: 'form-control', style: 'text-align:center;' %></td>
+              <% else %>
               <td class="td_vertical_align_middle"><%= row[col] %></td>
+              <% end %>
               <% end %>
             </tr>
             <% end %>
           </tbody>
         </table>
+        <% end %>
       </div>
     </div>
   </div>
@@ -42,10 +48,15 @@
 
 <script type="text/javascript">
   $(document).ready(function(){
-    $('#download_template').on('click', function() {
-      setTimeout(function(){
-          location.href = '/products/show';
-      },1000);
+    $('#data_update').on('click', function() {
+      $('#mws_upload').removeAttr('data-disable-with');
+      $('#data_update').addAttr({'data-disable-with': "データ更新"});
     });
+
+    $('#mws_upload').on('click', function() {
+      $('#data_update').removeAttr('data-disable-with');
+      $('#mws_upload').addAttr({'data-disable-with': "MWSアップロード"});
+    });
+
   });
 </script>

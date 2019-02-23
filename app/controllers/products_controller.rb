@@ -1,6 +1,7 @@
 class ProductsController < ApplicationController
 
   require 'csv'
+  require 'peddler'
 
   def check
     @login_user = current_user
@@ -16,24 +17,25 @@ class ProductsController < ApplicationController
     @items = List.where(user: user, status: 'before_listing')
     @body = Array.new
     @template = ListTemplate.where(user: user, list_type: '相乗り')
+
     @items.each do |temp|
       thash = Hash.new
       @template.each do |ch|
         thash[ch.header] = ch.value
       end
-      
+
       @headers[2].each do |col|
         case col
         when 'sku' then
           thash['sku'] = temp.item_id
         when 'price' then
-          thash['price'] = temp.product.new_price
+          thash['price'] = temp.price
         when 'standard-price-points' then
-          thash['standard-price-points'] = (temp.product.new_price * 0.01).round(0)
+          thash['standard-price-points'] = temp.point
         when 'product-id' then
           thash['product-id'] = temp.item.jan
         when 'product-id-type' then
-          thash['product-id-type'] = 'JAN'
+          thash['product-id-type'] = 'EAN'
         else
 
         end
@@ -42,7 +44,31 @@ class ProductsController < ApplicationController
     end
 
     if request.post? then
-
+      if params[:commit] == 'MWSアップロード' then
+        stream = ''
+        @headers.each do |row|
+          buf = row.join("\t")
+          stream = stream + buf + "\n"
+        end
+        @body.each do |row|
+          buf = ''
+          @headers[2].each_with_index do |col, index|
+            buf = buf + row[col].to_s + "\t" if index < @headers[2].length - 1
+          end
+          buf = buf + row[@headers[2].last]
+          stream = stream + buf + "\n"
+        end
+        Product.feed_upload(user, stream)
+      else
+        new_price = params[:text]
+        logger.debug(new_price)
+        new_price.each do |key, value|
+          @items.find_by(item_id: key).update(
+            price: value.to_i
+          )
+        end
+      end
+      redirect_to products_check_path
     end
   end
 
@@ -80,7 +106,7 @@ class ProductsController < ApplicationController
             when 'product-id' then
               thash['product-id'] = temp.item.jan
             when 'product-id-type' then
-              thash['product-id-type'] = 'JAN'
+              thash['product-id-type'] = 'EAN'
             else
 
             end

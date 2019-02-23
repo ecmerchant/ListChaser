@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_02_23_031609) do
+ActiveRecord::Schema.define(version: 2019_02_23_104754) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -25,6 +25,10 @@ ActiveRecord::Schema.define(version: 2019_02_23_031609) do
     t.integer "max_page", default: 10
     t.integer "max_item_num", default: 100
     t.string "rakuten_app_id"
+    t.string "listing_report_id"
+    t.string "inventory_report_id"
+    t.datetime "listing_uploaded_at"
+    t.datetime "inventory_uploaded_at"
   end
 
   create_table "converters", force: :cascade do |t|
@@ -70,6 +74,9 @@ ActiveRecord::Schema.define(version: 2019_02_23_031609) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "profit"
+    t.integer "price"
+    t.integer "point"
+    t.string "condition"
     t.index ["user", "item_id"], name: "for_upsert_lists", unique: true
   end
 

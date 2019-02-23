@@ -4,7 +4,8 @@
       <div class="col-lg-10 col-md-10">
         <h2>出品ファイルの設定</h2>
         <%= form_tag('/list_templates/setup', method:'post') do %>
-          <p class="lead">相乗り出品の設定</p>
+          <p class="lead" style="display:inline;margin-right:20px;">相乗り出品の設定</p>
+          <%= link_to '各項目の詳細について', 'https://docs.google.com/spreadsheets/d/19wm9__Z6ORCUepbvobbN04jfmcHZHizAac4ubbqrdBE/edit?usp=sharing', target: '_blank' %>
           <div class="actions">
             <%= submit_tag 'テンプレート設定', class: 'btn btn-info', style: 'margin-right:20px;' %>
           </div><br>

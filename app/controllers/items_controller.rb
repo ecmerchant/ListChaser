@@ -36,12 +36,18 @@ class ItemsController < ApplicationController
       logger.debug(params)
       user = current_user.email
       temp = List.where(user: user)
+      List.where(user: user).where(status: 'before_listing').update(
+        status: 'before_sale'
+      )
       targets = params[:checked]
       if targets != nil then
         targets.each do |key, value|
           item_id = key
-          temp.find_by(item_id: item_id).update(
-            status: 'before_listing'
+          tag = temp.find_by(item_id: item_id)
+          tag.update(
+            status: 'before_listing',
+            price: tag.product.new_price,
+            point: (tag.product.new_price.to_f * 0.01).round(0),
           )
         end
       end
