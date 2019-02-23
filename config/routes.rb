@@ -2,7 +2,14 @@ require 'resque/server'
 
 Rails.application.routes.draw do
 
+  get 'list_templates/setup'
+  post 'list_templates/setup'
+
   get 'products/check'
+  post 'products/check'
+  get 'products/csv_download'
+
+
   get 'accounts/setup'
   post 'accounts/setup'
 
