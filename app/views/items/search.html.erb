@@ -47,7 +47,7 @@
             <tr>
               <% check_status = false %>
               <% if temp.status == 'before_listing' then check_status = true end %>
-              <td class="td_vertical_align_middle" rowspan="2"><%= index + 1 %></td>
+              <td class="td_vertical_align_middle" rowspan="2"><%= index + 1 + @stnum %></td>
               <td class="td_vertical_align_middle">楽天市場</td>
               <td class="td_vertical_align_middle" rowspan="2"><%= check_box_tag 'checked[' + temp.item_id + ']', true, checked = check_status, :style => 'width: 20px; height: 20px;' %></td>
               <td class="td_vertical_align_middle" style="padding:1px;"><%= if temp.item.image != nil then image_tag(temp.item.image, height:'40px') end %></td>

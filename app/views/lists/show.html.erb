@@ -1,0 +1,45 @@
+<div class="container">
+  <div class="page-header" id="banner">
+    <div class="row my-4">
+      <div class="col-lg-10 col-md-10">
+        <h2>出品中商品の管理</h2>
+        <%= form_tag('/lists/show', method:'post') do %>
+          <div class="actions">
+            <%= submit_tag '在庫監視実行', class: 'btn btn-info', style: 'margin-right:20px;' %>
+          </div><br>
+          <table class="table table-striped table-hover table-bordered" style='width:1200px; table-layout:fixed;'>
+            <thead class="thead-light">
+              <tr>
+                <% @headers.each do |key, value| %>
+                <th><%= value %></th>
+                <% end %>
+              </tr>
+            </thead>
+            <tbody>
+              <% @lists.each do |list| %>
+              <tr>
+                <% @headers.each do |key, value|  %>
+                <% case key %>
+                <% when :name then %>
+                <td class="td_vertical_align_middle"><%= truncate(list.product.name) %></td>
+                <% when :shop_id then %>
+                <td class="td_vertical_align_middle"><%= list.item.shop.name %></td>
+                <% when :cost then %>
+                <td class="td_vertical_align_middle"><%= list.item.price %></td>
+                <% when :availability then %>
+                <td class="td_vertical_align_middle"><%= list.item.availability %></td>
+                <% when :condition then %>
+                <td class="td_vertical_align_middle"><%= list.item.condition %></td>
+                <% else %>
+                <td class="td_vertical_align_middle"><%= list[key] %></td>
+                <% end %>
+                <% end %>
+              </tr>
+              <% end %>
+            </tbody>
+          </table>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>

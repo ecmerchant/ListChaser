@@ -2,6 +2,8 @@ require 'resque/server'
 
 Rails.application.routes.draw do
 
+  get 'lists/show'
+  get 'lists/shoe'
   get 'rakuten_searches/setup'
   post 'rakuten_searches/setup'
 

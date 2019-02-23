@@ -59,6 +59,9 @@ class ProductsController < ApplicationController
           stream = stream + buf + "\n"
         end
         Product.feed_upload(user, stream)
+        @items.update(
+          status: 'listing'
+        )
       else
         new_price = params[:text]
         logger.debug(new_price)
@@ -115,6 +118,9 @@ class ProductsController < ApplicationController
         end
         fname = "アマゾン出品ファイル_" + Time.now.strftime("%Y%m%D%H%M%S") + ".txt"
         send_data render_to_string, filename: fname, type: :csv
+        @items.update(
+          status: 'listing'
+        )
       end
     end
   end

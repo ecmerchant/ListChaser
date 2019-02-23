@@ -3,7 +3,12 @@ class ItemsController < ApplicationController
   def search
     @login_user = current_user
     user = current_user.email
-    @items = List.where(user: user).where('(status = ?) OR (status = ?)', 'searching', 'before_listing').order('product_id DESC NULLS LAST').order('profit DESC NULLS LAST').page(params[:page]).per(PER)
+    if params[:page].to_i > 1 then
+      @stnum = (params[:page].to_i - 1) * PER
+    else
+      @stnum = 0
+    end
+    @items = List.where(user: user).where('(status = ?) OR (status = ?)', 'searching', 'before_listing').order('profit DESC NULLS LAST').page(params[:page]).per(PER)
     @total = List.where(user: user, status:'searching').count
     @headers = Constants::HITEM
     @account = Account.find_or_create_by(user: user)
