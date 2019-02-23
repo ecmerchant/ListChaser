@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_02_23_104754) do
+ActiveRecord::Schema.define(version: 2019_02_23_123820) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -98,6 +98,22 @@ ActiveRecord::Schema.define(version: 2019_02_23_104754) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["product_id"], name: "for_upsert_products", unique: true
+  end
+
+  create_table "rakuten_searches", force: :cascade do |t|
+    t.string "user"
+    t.text "keyword"
+    t.string "shop_code"
+    t.string "item_code"
+    t.string "genre_id"
+    t.string "tag_id"
+    t.string "sort"
+    t.integer "min_price"
+    t.integer "max_price"
+    t.text "ng_keyword"
+    t.integer "postage_flag"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "shops", force: :cascade do |t|

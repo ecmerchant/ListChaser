@@ -8,9 +8,14 @@ class ItemsController < ApplicationController
     @headers = Constants::HITEM
     @account = Account.find_or_create_by(user: user)
     @converter = Converter.all
+    @search_condition = RakutenSearch.find_or_create_by(user: user)
     if request.post? then
       keyword = params[:input_key]
       return if keyword == nil
+      @search_condition.update(
+        keyword: keyword
+      )
+
       search_url = "search.rakuten.co.jp"
       #仕入れ先の判別
       if search_url.include?("search.rakuten.co.jp") then

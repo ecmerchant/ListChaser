@@ -6,9 +6,7 @@ class Product < ApplicationRecord
     account = Account.find_by(user: user)
     etime = Time.zone.now
     stime = etime.ago(12.hours)
-    stime = etime.ago(1.minutes)
     darray = Converter.where(key_type: 'jan').where(updated_at: stime..etime).pluck(:keyword)
-    logger.debug(query)
     query = query - darray
     logger.debug(query)
     if query[0] == nil then return end

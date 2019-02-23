@@ -23,7 +23,7 @@
                 <td class="td_vertical_align_middle" style='width:25%;'><%= truncate(row[1]) %></td>
                 <td class="td_vertical_align_middle" style='width:25%;'><%= row[2] %></td>
                 <% if @template.find_by(header: row[2]) != nil then init = @template.find_by(header: row[2]).value else init = nil end %>
-                <td class="td_vertical_align_middle" style='width:50%;'><%= text_field_tag'text[' + row[2] + ']', init, class: 'form-control' %></td>
+                <td class="td_vertical_align_middle" style='width:50%;'><%= text_field_tag 'text[' + row[2] + ']', init, class: 'form-control' %></td>
               </tr>
               <% end %>
             </tbody>

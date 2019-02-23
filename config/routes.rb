@@ -2,6 +2,9 @@ require 'resque/server'
 
 Rails.application.routes.draw do
 
+  get 'rakuten_searches/setup'
+  post 'rakuten_searches/setup'
+
   get 'list_templates/setup'
   post 'list_templates/setup'
 

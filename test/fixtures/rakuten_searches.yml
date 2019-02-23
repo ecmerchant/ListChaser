@@ -1,0 +1,27 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  user: MyString
+  keyword: MyText
+  shop_code: MyString
+  item_code: MyString
+  genre_id: MyString
+  tag_id: MyString
+  sort: MyString
+  min_price: 1
+  max_price: 1
+  ng_keyword: MyText
+  postage_flag: 1
+
+two:
+  user: MyString
+  keyword: MyText
+  shop_code: MyString
+  item_code: MyString
+  genre_id: MyString
+  tag_id: MyString
+  sort: MyString
+  min_price: 1
+  max_price: 1
+  ng_keyword: MyText
+  postage_flag: 1

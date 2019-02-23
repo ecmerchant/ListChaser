@@ -23,7 +23,18 @@ class Item < ApplicationRecord
         c.application_id = ENV['RAKUTEN_APP_ID']
       end
 
-      results = RakutenWebService::Ichiba::Item.search(:keyword => keyword)
+      search_condition = Hash.new
+      temp = RakutenSearch.find_by(user: user)
+
+      RakutenSearch.column_names.each do |t|
+        if t != 'user' && t != 'id' then
+          if temp[t] != '' && temp[t] != nil then
+            search_condition[t] = temp[t]
+          end
+        end
+      end
+      logger.debug(search_condition)
+      results = RakutenWebService::Ichiba::Item.search(search_condition)
       item_num = results.count
       page = 0
 
@@ -100,15 +111,18 @@ class Item < ApplicationRecord
           end
           page += 1
           if res != nil then
+            targets = res.keys
+            targets.delete(:item_id)
+            Item.import item_list, on_duplicate_key_update: {constraint_name: :for_upsert_items, columns: targets}
 
             logger.debug('!!check!!')
             Product.search(user, jans, 'jan')
 
             uhash.each do |key, value|
               tt = Item.find_by(item_id: key)
-              if tt.converter != nil then
+              if tt.converter != NilClass && tt.converter != nil then
                 ptemp = tt.converter.product
-                if ptemp != nil then
+                if ptemp != NilClass && ptemp != nil then
                   pid = ptemp.product_id
                   price = ptemp.new_price + ptemp.new_point - ptemp.new_shipping
                   profit = (price.to_f * (1.0 - ptemp.amazon_fee) - tt.price.to_f).round(0)
@@ -127,10 +141,6 @@ class Item < ApplicationRecord
               user_list << List.new(buf)
             end
 
-            targets = res.keys
-            targets.delete(:item_id)
-
-            Item.import item_list, on_duplicate_key_update: {constraint_name: :for_upsert_items, columns: targets}
             List.import user_list, on_duplicate_key_update: {constraint_name: :for_upsert_lists, columns: [:status, :product_id, :profit]}
             @account.update(
               current_item_num: page
