@@ -4,7 +4,6 @@
       <div class="col-lg-10 col-md-10">
         <h2>楽天検索条件の設定</h2>
         <%= form_for(@rakuten_search, {url: rakuten_searches_setup_path, method: 'post'}) do |f| %>
-          <%= link_to '各項目の詳細について', 'https://docs.google.com/spreadsheets/d/19wm9__Z6ORCUepbvobbN04jfmcHZHizAac4ubbqrdBE/edit?usp=sharing', target: '_blank' %>
           <div class="actions">
             <%= submit_tag '検索条件設定', class: 'btn btn-info', style: 'margin-top:10px;' %>
           </div><br>

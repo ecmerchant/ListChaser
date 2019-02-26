@@ -2,7 +2,7 @@ class Product < ApplicationRecord
   has_one :converter, primary_key: 'product_id'
   require 'peddler'
 
-  def self.search(user, query, type)
+  def self.search(user, query, type, amazon_condition)
     account = Account.find_by(user: user)
     etime = Time.zone.now
     stime = etime.ago(12.hours)
@@ -104,7 +104,7 @@ class Product < ApplicationRecord
       Converter.import converter_list, on_duplicate_key_update: {constraint_name: :for_upsert_converters, columns:[:key_type]}
 
       #価格情報の取得
-      condition = "New"
+      condition = amazon_condition
       product_list = nil
       asin_list.each_slice(20) do |asins|
         #最低価格の取得
@@ -384,7 +384,6 @@ class Product < ApplicationRecord
       listing_uploaded_at: Time.now,
       listing_report_id: generatedId
     )
-
   end
 
 end

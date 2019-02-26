@@ -1,5 +1,6 @@
 class ItemsController < ApplicationController
-  PER = 30
+
+  PER = 90
   def search
     @login_user = current_user
     user = current_user.email
@@ -16,6 +17,8 @@ class ItemsController < ApplicationController
     @search_condition = RakutenSearch.find_or_create_by(user: user)
     if request.post? then
       keyword = params[:input_key]
+      amazon_condition = params[:condition]
+
       return if keyword == nil
       @search_condition.update(
         keyword: keyword
@@ -36,7 +39,7 @@ class ItemsController < ApplicationController
       @account.update(
         current_item_num: 0
       )
-      ItemSearchJob.perform_later(user, keyword, shop_id)
+      ItemSearchJob.perform_later(user, keyword, shop_id, amazon_condition)
       #Item.search(user, keyword, shop_id)
     end
   end
@@ -56,8 +59,7 @@ class ItemsController < ApplicationController
           tag = temp.find_by(item_id: item_id)
           tag.update(
             status: 'before_listing',
-            price: tag.product.new_price,
-            point: (tag.product.new_price.to_f * 0.01).round(0),
+            point: (tag.price.to_f * 0.01).round(0),
           )
         end
       end

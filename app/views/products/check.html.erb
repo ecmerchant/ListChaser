@@ -31,7 +31,9 @@
             <tr>
               <% @headers[2].each do |col| %>
               <% if col == 'price' then %>
-              <td class="td_vertical_align_middle"><%= text_field_tag 'text[' + row['sku'] + ']', row[col], class: 'form-control', style: 'text-align:center;' %></td>
+              <td class="td_vertical_align_middle"><%= text_field_tag 'price[' + row['sku'] + ']', row[col], class: 'form-control', style: 'text-align:center;' %></td>
+              <% elsif col == 'standard-price-points' then %>
+              <td class="td_vertical_align_middle"><%= text_field_tag 'point[' + row['sku'] + ']', row[col], class: 'form-control', style: 'text-align:center;' %></td>
               <% else %>
               <td class="td_vertical_align_middle"><%= row[col] %></td>
               <% end %>

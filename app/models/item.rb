@@ -6,15 +6,15 @@ class Item < ApplicationRecord
   require 'extension/string'
   require 'rakuten_web_service'
 
-  def self.search(user, keyword, shop_id)
+  def self.search(user, keyword, shop_id, amazon_condition)
     logger.debug("========= SEARCH ==========")
     @account = Account.find_or_create_by(user: user)
 
     case shop_id
     when 1 then
       #楽天市場 API
-
       titem = Item.all
+
       List.where(user: user, status: 'searching').update(
         status: 'before_sale'
       )
@@ -33,7 +33,7 @@ class Item < ApplicationRecord
           end
         end
       end
-      logger.debug(search_condition)
+
       results = RakutenWebService::Ichiba::Item.search(search_condition)
       res = results.fetch_result
 
@@ -97,6 +97,11 @@ class Item < ApplicationRecord
             end
             category_id = result['genreId']
             description = result['itemCaption']
+            if jan == nil && description.jan != nil then
+              jan = description.jan
+              jans.push(jan)
+            end
+
             mpn = nil
 
             condition = "New"
@@ -123,7 +128,7 @@ class Item < ApplicationRecord
 
             if checker.key?(item_id) == false then
               item_list << Item.new(res)
-              uhash[item_id] = {user: user, item_id: item_id, status: 'searching'}
+              uhash[item_id] = {user: user, item_id: item_id, status: 'searching', price: price}
               checker[item_id] = name
               counter += 1
             end
@@ -136,7 +141,7 @@ class Item < ApplicationRecord
             Item.import item_list, on_duplicate_key_update: {constraint_name: :for_upsert_items, columns: targets}
 
             logger.debug('!!check!!')
-            Product.search(user, jans, 'jan')
+            Product.search(user, jans, 'jan', amazon_condition)
 
             uhash.each do |key, value|
               tt = Item.find_by(item_id: key)
@@ -144,8 +149,12 @@ class Item < ApplicationRecord
                 ptemp = tt.converter.product
                 if ptemp != NilClass && ptemp != nil then
                   pid = ptemp.product_id
-                  price = ptemp.new_price + ptemp.new_point - ptemp.new_shipping
-                  profit = (price.to_f * (1.0 - ptemp.amazon_fee) - tt.price.to_f).round(0)
+                  #price = ptemp.new_price + ptemp.new_point - ptemp.new_shipping
+                  tprice = Price.calc(user, value[:price])
+                  profit = (tprice.to_f * (1.0 - ptemp.amazon_fee) - tt.price.to_f).round(0)
+                  logger.debug(value[:price])
+                  logger.debug(tprice)
+
                 else
                   pid = nil
                   profit = nil
@@ -155,13 +164,16 @@ class Item < ApplicationRecord
                 profit = nil
               end
 
+              logger.debug(value)
               buf = value
+              buf[:price] = tprice
               buf[:product_id] = pid
               buf[:profit] = profit
+              logger.debug(buf)
               user_list << List.new(buf)
             end
-
-            List.import user_list, on_duplicate_key_update: {constraint_name: :for_upsert_lists, columns: [:status, :product_id, :profit]}
+          
+            List.import user_list, on_duplicate_key_update: {constraint_name: :for_upsert_lists, columns: [:status, :product_id, :profit, :price]}
             @account.update(
               current_item_num: page
             )

@@ -6,8 +6,8 @@ class ItemSearchJob < ApplicationJob
     logger.error exception
   end
 
-  def perform(user, search_url, shop_id)
-    Item.search(user, search_url, shop_id)
+  def perform(user, search_url, shop_id, amazon_condition)
+    Item.search(user, search_url, shop_id, amazon_condition)
   end
 
 end

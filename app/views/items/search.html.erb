@@ -6,8 +6,11 @@
         <div class="form-inline">
           <%= form_tag('/items/search', method:'post', id:'items_search') do %>
             <div class="form-inline">
+              <label style='margin-right:10px;'>商品状態
+              <%= select_tag 'condition', options_for_select({"新品" => "New", "中古" => "Used"}, "New"), class:'form-control', style:'margin-left:10px;' %>
+              </label>
               <div class="form-group">
-                <label>検索用キーワード</label>
+                <label>検索キーワード</label>
                 <%= text_field_tag('input_key', @search_condition.keyword,  class: 'form-control', style: 'margin-left:10px; margin-right:20px;') %>
               </div>
               <%= link_to '詳細設定', rakuten_searches_setup_path, style: 'margin-right:10px;' %>

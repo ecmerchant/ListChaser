@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_02_23_165244) do
+ActiveRecord::Schema.define(version: 2019_02_26_140731) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -80,6 +80,14 @@ ActiveRecord::Schema.define(version: 2019_02_23_165244) do
     t.integer "point"
     t.string "condition"
     t.index ["user", "item_id"], name: "for_upsert_lists", unique: true
+  end
+
+  create_table "prices", force: :cascade do |t|
+    t.string "user"
+    t.integer "original_price"
+    t.integer "convert_price"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "products", force: :cascade do |t|

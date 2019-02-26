@@ -1,4 +1,5 @@
 class AccountsController < ApplicationController
+  
   def setup
     @login_user = current_user
     user = current_user.email

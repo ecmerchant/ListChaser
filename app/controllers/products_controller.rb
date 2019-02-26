@@ -63,13 +63,21 @@ class ProductsController < ApplicationController
           status: 'listing'
         )
       else
-        new_price = params[:text]
+        new_price = params[:price]
         logger.debug(new_price)
         new_price.each do |key, value|
           @items.find_by(item_id: key).update(
             price: value.to_i
           )
         end
+        new_point = params[:point]
+        logger.debug(new_price)
+        new_point.each do |key, value|
+          @items.find_by(item_id: key).update(
+            point: value.to_i
+          )
+        end
+
       end
       redirect_to products_check_path
     end
