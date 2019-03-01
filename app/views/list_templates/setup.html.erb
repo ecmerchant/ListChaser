@@ -28,6 +28,25 @@
               <% end %>
             </tbody>
           </table>
+          <br>
+          <p><b>商品のコンデイション説明文　定型登録</b></p>
+          <table class="table table-striped table-hover table-bordered" style='width:800px; table-layout:fixed;'>
+            <thead class="thead-light">
+              <tr>
+                <th style='width:25%;'>番号</th>
+                <th style='width:25%;'>メモ</th>
+                <th style='width:50%;'>設定値</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% @notes.each do |row| %>
+              <tr>
+                <td class="td_vertical_align_middle" style='width:150px;'><%= row.number %></td>
+                <td class="td_vertical_align_middle" style='width:200px;'><%= text_field_tag 'memo[' + row.number.to_s + ']', row.memo, class: 'form-control' %></td>
+                <td class="td_vertical_align_middle" style='width:450px;'><%= text_field_tag 'note[' + row.number.to_s + ']', row.content, class: 'form-control' %></td>
+              </tr>
+              <% end %>
+            </tbody>
         <% end %>
       </div>
     </div>

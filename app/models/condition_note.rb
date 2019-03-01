@@ -1,0 +1,2 @@
+class ConditionNote < ApplicationRecord
+end

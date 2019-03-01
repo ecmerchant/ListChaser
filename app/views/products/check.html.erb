@@ -34,6 +34,8 @@
               <td class="td_vertical_align_middle"><%= text_field_tag 'price[' + row['sku'] + ']', row[col], class: 'form-control', style: 'text-align:center;' %></td>
               <% elsif col == 'standard-price-points' then %>
               <td class="td_vertical_align_middle"><%= text_field_tag 'point[' + row['sku'] + ']', row[col], class: 'form-control', style: 'text-align:center;' %></td>
+              <% elsif col == 'condition-note' then %>
+              <td class="td_vertical_align_middle"><%= select_tag 'condition_note[' + row['sku'] + ']', options_for_select(@selection), class:'form-control', style:'margin-left:10px;' %></td>
               <% else %>
               <td class="td_vertical_align_middle"><%= row[col] %></td>
               <% end %>

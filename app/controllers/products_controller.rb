@@ -18,6 +18,13 @@ class ProductsController < ApplicationController
     @body = Array.new
     @template = ListTemplate.where(user: user, list_type: '相乗り')
 
+    @notes = ConditionNote.where(user: user)
+    @selection = Array.new
+    @notes.each do |nt|
+      key = nt.number.to_s + " :" + nt.memo
+      @selection.push(nt.content)
+    end
+
     @items.each do |temp|
       thash = Hash.new
       @template.each do |ch|
@@ -36,6 +43,8 @@ class ProductsController < ApplicationController
           thash['product-id'] = temp.item.jan
         when 'product-id-type' then
           thash['product-id-type'] = 'EAN'
+        when 'condition_note' then
+          thash['condition_note'] = temp.condition_note
         else
 
         end
@@ -70,11 +79,18 @@ class ProductsController < ApplicationController
             price: value.to_i
           )
         end
+
         new_point = params[:point]
-        logger.debug(new_price)
         new_point.each do |key, value|
           @items.find_by(item_id: key).update(
             point: value.to_i
+          )
+        end
+
+        condition_note = condition_note[:point]
+        condition_note.each do |key, value|
+          @items.find_by(item_id: key).update(
+            condition_note: value.to_s
           )
         end
 
