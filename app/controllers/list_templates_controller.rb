@@ -19,11 +19,15 @@ class ListTemplatesController < ApplicationController
         @headers.push(row)
       end
     end
+
     if request.post? then
       target = ListTemplate.where
       data = params[:text]
       data.each do |key, value|
-        ListTemplate.find_or_create_by(user: user, list_type: '相乗り', header: key, value: value)
+        temp = ListTemplate.find_or_create_by(user: user, list_type: '相乗り', header: key)
+        temp.update(
+          value: value
+        )
       end
       notes = params[:note]
       memos = params[:memo]
@@ -31,7 +35,7 @@ class ListTemplatesController < ApplicationController
       notes.each do |key, value|
         buf = @notes.find_or_create_by(number: key.to_i)
         buf.update(
-          memo: memos[key], 
+          memo: memos[key],
           content: value
         )
       end

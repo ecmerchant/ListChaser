@@ -19,12 +19,18 @@
             </thead>
             <tbody>
               <% @headers.transpose.each do |row| %>
+              <% if ["standard-price-points", "quantity", "condition-type", "leadtime-to-ship"].include?(row[2]) then %>
               <tr>
                 <td class="td_vertical_align_middle" style='width:25%;'><%= truncate(row[1]) %></td>
                 <td class="td_vertical_align_middle" style='width:25%;'><%= row[2] %></td>
                 <% if @template.find_by(header: row[2]) != nil then init = @template.find_by(header: row[2]).value else init = nil end %>
+                <% if row[2] == "condition-type" then %>
+                <td class="td_vertical_align_middle" style='width:50%;'><%= select_tag 'text[' + row[2] + ']', options_for_select(["New", "UsedLikeNew", "UsedVeryGood", "UsedGood", "UsedAcceptable"]), class:'form-control', style:'margin-left:10px;' %></td>
+                <% else %>
                 <td class="td_vertical_align_middle" style='width:50%;'><%= text_field_tag 'text[' + row[2] + ']', init, class: 'form-control' %></td>
+                <% end %>
               </tr>
+              <% end %>
               <% end %>
             </tbody>
           </table>

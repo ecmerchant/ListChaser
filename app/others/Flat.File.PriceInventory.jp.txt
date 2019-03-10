@@ -1,0 +1,3 @@
+TemplateType=PriceInventory	Version=2018.0924	この行はAmazonが使用しますので変更や削除しないでください。																
+商品管理番号	販売価格	ポイント	在庫数	通貨コード	セール価格	セール時ポイント	セール開始日	セール終了日	商品の入荷予定日	販売価格の下限設定	販売価格の上限設定	出荷経路	出荷作業日数					
+sku	price	standard-price-points	quantity	currency	sale-price	sale-price-points	sale-from-date	sale-through-date	restock-date	minimum-seller-allowed-price	maximum-seller-allowed-price	fulfillment-channel	handling-time					

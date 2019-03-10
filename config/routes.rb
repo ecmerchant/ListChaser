@@ -6,6 +6,8 @@ Rails.application.routes.draw do
   post 'prices/edit'
 
   get 'lists/show'
+  post 'lists/show'
+
   get 'rakuten_searches/setup'
   post 'rakuten_searches/setup'
 
