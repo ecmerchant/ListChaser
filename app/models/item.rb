@@ -150,7 +150,7 @@ class Item < ApplicationRecord
 
             logger.debug('!!check!!')
             Product.search(user, jans, 'jan', amazon_condition)
-            
+
             if keywords[0] != nil then
               Product.search(user, keywords, 'keyword', amazon_condition)
             end
@@ -184,11 +184,12 @@ class Item < ApplicationRecord
               buf[:price] = tprice
               buf[:product_id] = pid
               buf[:profit] = profit
+              buf[:shop_id] = shop_id
               logger.debug(buf)
               user_list << List.new(buf)
             end
 
-            List.import user_list, on_duplicate_key_update: {constraint_name: :for_upsert_lists, columns: [:status, :product_id, :profit, :price]}
+            List.import user_list, on_duplicate_key_update: {constraint_name: :for_upsert_lists, columns: [:status, :product_id, :profit, :price, :shop_id]}
             @account.update(
               current_item_num: page
             )
