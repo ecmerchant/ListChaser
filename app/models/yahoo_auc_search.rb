@@ -1,0 +1,2 @@
+class YahooAucSearch < ApplicationRecord
+end

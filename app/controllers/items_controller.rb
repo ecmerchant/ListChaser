@@ -4,43 +4,49 @@ class ItemsController < ApplicationController
   def search
     @login_user = current_user
     user = current_user.email
+
+    @account = Account.find_or_create_by(user: user)
+    @shop_id = @account.shop_id
+
     if params[:page].to_i > 1 then
       @stnum = (params[:page].to_i - 1) * PER
     else
       @stnum = 0
     end
-    @items = List.where(user: user).where('(status = ?) OR (status = ?)', 'searching', 'before_listing').order('profit DESC NULLS LAST').page(params[:page]).per(PER)
-    @total = List.where(user: user, status:'searching').count
+
+    @items = List.where(user: user, shop_id: @shop_id).where('(status = ?) OR (status = ?)', 'searching', 'before_listing').order('profit DESC NULLS LAST').page(params[:page]).per(PER)
+    @total = List.where(user: user, status:'searching', shop_id: @shop_id).count
     @headers = Constants::HITEM
-    @account = Account.find_or_create_by(user: user)
+
     @converter = Converter.all
     @search_condition = RakutenSearch.find_or_create_by(user: user)
+    @yahoo_search_condition = YahooAucSearch.find_or_create_by(user: user)
     if request.post? then
       keyword = params[:input_key]
+      input_url = params[:input_url]
       amazon_condition = params[:condition]
 
-      return if keyword == nil
+      return if keyword == nil && input_url == nil
       @search_condition.update(
         keyword: keyword
       )
-
-      search_url = "search.rakuten.co.jp"
-      #仕入れ先の判別
-      if search_url.include?("search.rakuten.co.jp") then
-        #楽天市場
-        logger.debug("========= Rakuten ==========")
-        shop_id = 1
-      elsif search_url.include?("auctions.yahoo.co.jp") then
-        #ヤフオク
-        logger.debug("========= Yahoo! ==========")
-        shop_id = 2
-      end
-      shop_id = 1
-      @account.update(
-        current_item_num: 0
+      @yahoo_search_condition.update(
+        search_url: input_url
       )
-      ItemSearchJob.perform_later(user, keyword, shop_id, amazon_condition)
-      #Item.search(user, keyword, shop_id)
+
+      shop_id = params[:shop].to_i
+      if shop_id == 1 then
+        keyword = keyword
+      else
+        keyword = input_url
+      end
+      @account.update(
+        current_item_num: 0,
+        shop_id: shop_id.to_s
+      )
+      #ItemSearchJob.perform_later(user, keyword, shop_id, amazon_condition)
+      Item.search(user, keyword, shop_id, amazon_condition)
+      redirect_to items_search_path
     end
   end
 

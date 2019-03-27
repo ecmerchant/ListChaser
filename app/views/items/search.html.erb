@@ -3,19 +3,44 @@
     <div class="row my-4">
       <div class="col-12">
         <h3>仕入対象商品の情報取得</h3>
-        <div class="form-inline">
+
           <%= form_tag('/items/search', method:'post', id:'items_search') do %>
             <div class="form-inline">
+              <label style='margin-right:10px;'>仕入先
+              <%= select_tag 'shop', options_for_select({"楽天" => "1", "ヤフオク" => "2"}, @account.shop_id), class:'form-control', style:'margin-left:10px;margin-right:20px;', id:'select_shop' %>
+              </label>
               <label style='margin-right:10px;'>商品状態
               <%= select_tag 'condition', options_for_select({"新品" => "New", "中古" => "Used"}, "New"), class:'form-control', style:'margin-left:10px;' %>
               </label>
+              <div class="form-inline">
+              <% if @account.shop_id.to_i == 1 then %>
+              <div id="rakuten_form" class="form-inline">
+              <% else %>
+              <div id="rakuten_form" class="form-inline" style="display:none;">
+              <% end %>
+
               <div class="form-group">
                 <label>検索キーワード</label>
                 <%= text_field_tag('input_key', @search_condition.keyword,  class: 'form-control', style: 'margin-left:10px; margin-right:20px;') %>
               </div>
-              <%= link_to '詳細設定', rakuten_searches_setup_path, style: 'margin-right:10px;' %>
-              <%= submit_tag '取得開始', class: 'btn btn-info',style: 'margin-left:10px; margin-right:20px;' %>
-            </div>
+              <%= link_to '楽天検索設定', rakuten_searches_setup_path, style: 'margin-right:10px;' %>
+              </div>
+              </div>
+              <% if @account.shop_id.to_i == 1 then %>
+              <div id="yahoo_form" class="form-inline" style="display:none;">
+              <% else %>
+              <div id="yahoo_form" class="form-inline">
+              <% end %>
+                <div class="form-group">
+                  <label>検索URL</label>
+                  <%= text_field_tag('input_url', @yahoo_search_condition.search_url,  class: 'form-control', style: 'margin-left:10px; margin-right:20px;') %>
+                </div>
+              </div>
+              </div>
+              <div class="form-inline" style='margin-top:20px;'>
+              <br>
+              <%= submit_tag '取得開始', class: 'btn btn-info', style: 'margin-right:20px;' %>
+
           <% end %>
 
           <%= form_tag('/items/select', method:'post', id:'update_form') do %>
@@ -39,7 +64,7 @@
               <th>出品</th>
               <th>画像</th>
               <th>価格</th>
-              <th>価格差</th>
+              <th>参考価格差</th>
               <th>商品名</th>
               <th>商品番号</th>
               <th>JAN</th>
@@ -47,15 +72,21 @@
           </thead>
           <tbody>
             <% @items.each_with_index do |temp, index| %>
+            <% if temp.item.converter != nil then %>
+              <% if temp.item.converter.product != nil then %>
+                <% amazon_price = temp.item.converter.product.new_price + temp.item.converter.product.new_shipping - temp.item.converter.product.new_point %>
+                <% profit = amazon_price - temp.item.price %>
+              <% end %>
+            <% end %>
             <tr>
               <% check_status = false %>
               <% if temp.status == 'before_listing' then check_status = true end %>
               <td class="td_vertical_align_middle" rowspan="2"><%= index + 1 + @stnum %></td>
-              <td class="td_vertical_align_middle">楽天市場</td>
+              <td class="td_vertical_align_middle"><%= temp.item.shop.name %></td>
               <td class="td_vertical_align_middle" rowspan="2"><%= check_box_tag 'checked[' + temp.item_id + ']', true, checked = check_status, :style => 'width: 20px; height: 20px;' %></td>
               <td class="td_vertical_align_middle" style="padding:1px;"><%= if temp.item.image != nil then image_tag(temp.item.image, height:'40px') end %></td>
               <td class="td_vertical_align_middle"><%= temp.item.price %></td>
-              <td class="td_vertical_align_middle" rowspan="2"><%= temp.profit %></td>
+              <td class="td_vertical_align_middle" rowspan="2"><%= profit %></td>
               <td class="td_vertical_align_middle"><%= link_to truncate(temp.item.name), temp.item.url,  target: '_blank' %></td>
               <td class="td_vertical_align_middle"><%= temp.item.item_id %></td>
               <td class="td_vertical_align_middle" rowspan="2"><%= temp.item.jan %></td>
@@ -93,6 +124,18 @@
 
 <script type="text/javascript">
   $(document).ready(function(){
+    //セレクトボックスが切り替わったら発動
+    $('#select_shop').change(function() {
+      var val = $(this).val();
+      if(val == 1){
+        $("#yahoo_form").css("display", "none");
+        $("#rakuten_form").css("display", "");
+      }else{
+        $("#yahoo_form").css("display", "");
+        $("#rakuten_form").css("display", "none");
+      }
+    });
+
     $('#download_template').on('click', function() {
       setTimeout(function(){
           location.href = '/products/show';

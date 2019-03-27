@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_03_01_144758) do
+ActiveRecord::Schema.define(version: 2019_03_27_152257) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -29,6 +29,7 @@ ActiveRecord::Schema.define(version: 2019_03_01_144758) do
     t.string "inventory_report_id"
     t.datetime "listing_uploaded_at"
     t.datetime "inventory_uploaded_at"
+    t.string "shop_id", default: "1"
   end
 
   create_table "condition_notes", force: :cascade do |t|
@@ -89,6 +90,7 @@ ActiveRecord::Schema.define(version: 2019_03_01_144758) do
     t.integer "point"
     t.string "condition"
     t.text "condition_note"
+    t.string "shop_id"
     t.index ["user", "item_id"], name: "for_upsert_lists", unique: true
   end
 
@@ -155,6 +157,13 @@ ActiveRecord::Schema.define(version: 2019_03_01_144758) do
     t.boolean "admin_flg"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
+  end
+
+  create_table "yahoo_auc_searches", force: :cascade do |t|
+    t.string "user"
+    t.text "search_url"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
 end

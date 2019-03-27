@@ -2,6 +2,9 @@ require 'resque/server'
 
 Rails.application.routes.draw do
 
+  get 'yahoo_auc_searches/setup'
+  post 'yahoo_auc_searches/setup'
+
   get 'prices/edit'
   post 'prices/edit'
 
