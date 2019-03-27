@@ -44,8 +44,8 @@ class ItemsController < ApplicationController
         current_item_num: 0,
         shop_id: shop_id.to_s
       )
-      #ItemSearchJob.perform_later(user, keyword, shop_id, amazon_condition)
-      Item.search(user, keyword, shop_id, amazon_condition)
+      ItemSearchJob.perform_later(user, keyword, shop_id, amazon_condition)
+      #Item.search(user, keyword, shop_id, amazon_condition)
       redirect_to items_search_path
     end
   end
