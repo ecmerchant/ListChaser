@@ -107,6 +107,7 @@ class Product < ApplicationRecord
       #キーワードで検索する場合
       logger.debug("=============== keyword =================")
       query.each do |squery|
+        sleep(5.8)
         asin = nil
         title = nil
         image = nil
@@ -189,7 +190,7 @@ class Product < ApplicationRecord
         else
           logger.debug("no asin")
         end
-        sleep(5)
+
       end
       Converter.import converter_list, on_duplicate_key_update: {constraint_name: :for_upsert_converters, columns:[:key_type]}
     end
