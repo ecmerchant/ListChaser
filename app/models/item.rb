@@ -208,13 +208,17 @@ class Item < ApplicationRecord
         status: 'before_sale'
       )
       org_url = keyword
-      if org_url.include?("&n=100") == false then
+      if org_url.include?("&n=") == false then
         org_url = org_url + "&n=100"
+      else
+        tb = /\&n=([\s\S]*?)\&/.match(org_url)[1]
+        org_url = org_url.gsub("&n=" + tb.to_s , "&n=100")
       end
 
       if org_url.include?("&b=1") == false then
         org_url = org_url + "&b=1"
       end
+
       ua = CSV.read('app/others/User-Agent.csv', headers: false, col_sep: "\t")
       counter = 0
       max_page = 1
