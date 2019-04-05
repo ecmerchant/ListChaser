@@ -209,10 +209,10 @@ class Item < ApplicationRecord
       )
       org_url = keyword
       if org_url.include?("&n=") == false then
-        org_url = org_url + "&n=100"
+        org_url = org_url + "&n=20"
       else
         tb = /\&n=([\s\S]*?)\&/.match(org_url)[1]
-        org_url = org_url.gsub("&n=" + tb.to_s , "&n=100")
+        org_url = org_url.gsub("&n=" + tb.to_s , "&n=20")
       end
 
       if org_url.include?("&b=1") == false then
@@ -226,7 +226,7 @@ class Item < ApplicationRecord
       (1..100).each do |page|
         #各ページにアクセス
         logger.debug("---------------------------------")
-        turl = org_url.gsub("&b=1", "&b=" + (1 + (page - 1) * 100).to_s)
+        turl = org_url.gsub("&b=1", "&b=" + (1 + (page - 1) * 20).to_s)
         logger.debug(turl)
         option = {
           #{}"User-Agent" => "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100"
@@ -418,12 +418,16 @@ class Item < ApplicationRecord
 
         List.import user_list, on_duplicate_key_update: {constraint_name: :for_upsert_lists, columns: [:status, :product_id, :profit, :price, :shop_id]}
         @account.update(
-          current_item_num: page
+          current_item_num: page,
+          progress: "データの処理中"
         )
 
       end
 
     end
+    @account.update(
+      progress: "取得完了"
+    )
   end
 
   def self.patrol

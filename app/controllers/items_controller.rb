@@ -42,7 +42,8 @@ class ItemsController < ApplicationController
       end
       @account.update(
         current_item_num: 0,
-        shop_id: shop_id.to_s
+        shop_id: shop_id.to_s,
+        progress: "処理受付完了"
       )
       ItemSearchJob.perform_later(user, keyword, shop_id, amazon_condition)
       #Item.search(user, keyword, shop_id, amazon_condition)

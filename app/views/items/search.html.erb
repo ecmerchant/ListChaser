@@ -48,7 +48,7 @@
         </div>
         <br>
 
-        <h5 style="display:inline;">取得済み件数　全<%= @total.to_i %>件</h5>
+        <h5 style="display:inline;">取得済み件数　全<%= @total.to_i %>件&nbsp;&nbsp;&nbsp;&nbsp;処理状況：<%= @account.progress.to_s %></h5>
         <div class="progress" style="width: 60%;">
           <div class="progress-bar progress-bar-striped active" id="progress_bar" role="progressbar" style="width: <%= ((@account.current_item_num * 100) / @account.max_item_num).round(0) %>%;">
             <%= ((@account.current_item_num * 100) / @account.max_item_num).round(0) %>%
