@@ -239,8 +239,7 @@ class Item < ApplicationRecord
         end
 
         if page == 1 then
-          nr = /<p class="total">([\s\S]*?)<\/p>/.match(html)[1]
-          nr = /<em>([\s\S]*?)<\/em>/.match(nr)[1]
+          nr = /の検索結果<\/span>([\s\S]*?)件/.match(html)[1]
           max_page = (nr.to_i / 100) + 1
           if max_page > 100 then
             max_page = 100
@@ -256,7 +255,8 @@ class Item < ApplicationRecord
         query = Array.new
 
         doc = Nokogiri::HTML.parse(html, nil, charset)
-        hits = html.scan(/<tr><td class="i">([\s\S]*?)class="s1">/)
+
+        hits = html.scan(/<li class="Product">([\s\S]*?)<div class="Layer js-watch-button-layer">/)
 
         if hits[0] == nil then
           hits = html.scan(/<div class="i">([\s\S]*?)<p class="ft">/)
@@ -269,9 +269,10 @@ class Item < ApplicationRecord
         result = nil
         hits.each do |hit|
           src = hit[0]
+          logger.debug(src)
+          title = /<h3([\s\S]*?)<\/h3>/.match(src)[1]
 
-          title = /<h3>([\s\S]*?)<\/h3>/.match(src)[1]
-          if src.include?('<span class="cic1">新品</span>') then
+          if src.include?('<span class="Product__icon Product__icon--unused">新品</span> ') then
             condition = "New"
           else
             condition = "Used"
@@ -283,7 +284,8 @@ class Item < ApplicationRecord
             if title.include?("<em>") then
               title = /<em>([\s\S]*?)</.match(title)[1]
             else
-              title = />([\s\S]*?)</.match(title)[1]
+              title = /<a([\s\S]*?)<\/a/.match(title)[1]
+              title = />([\s\S]*?)$/.match(title)[1]
             end
             availability = true
           else
@@ -292,7 +294,27 @@ class Item < ApplicationRecord
             item_id = ""
           end
           image = /src="([\s\S]*?)"/.match(src)[1]
-          price = /<td class="pr2">([\s\S]*?)<\/td>/.match(src)
+
+          cprice = /Product__priceValue u-textRed">([\s\S]*?)円/.match(src)
+          bprice = /Product__priceValue">([\s\S]*?)円/.match(src)
+
+          if cprice != nil then
+            cprice = cprice[1]
+            cprice = cprice.gsub(",", "")
+          end
+
+          if bprice != nil then
+            bprice = bprice[1]
+            bprice = bprice.gsub(",", "")
+          end
+
+          if bprice != nil then
+            price = bprice
+          else
+            price = cprice
+          end
+
+=begin
           if price != nil then
             price = price[1]
             if price.include?("<span>") then
@@ -319,6 +341,8 @@ class Item < ApplicationRecord
               price = price.gsub(",", "")
             end
           end
+=end
+
           counter += 1
           jan = ""
           mpn = ""
