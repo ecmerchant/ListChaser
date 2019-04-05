@@ -237,7 +237,7 @@ class Item < ApplicationRecord
           charset = f.charset
           f.read
         end
-        logger.debug(html)
+        #logger.debug(html)
         if page == 1 then
           nr = /の検索結果<\/span>([\s\S]*?)件/.match(html)[1]
           max_page = (nr.to_i / 100) + 1
