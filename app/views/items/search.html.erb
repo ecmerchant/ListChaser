@@ -10,7 +10,7 @@
               <%= select_tag 'shop', options_for_select({"楽天" => "1", "ヤフオク" => "2"}, @account.shop_id), class:'form-control', style:'margin-left:10px;margin-right:20px;', id:'select_shop' %>
               </label>
               <label style='margin-right:10px;'>商品状態
-              <%= select_tag 'condition', options_for_select({"新品" => "New", "中古" => "Used"}, "New"), class:'form-control', style:'margin-left:10px;' %>
+              <%= select_tag 'condition', options_for_select({"新品" => "New", "中古" => "Used", "コレクター" => "Collectible"}, "New"), class:'form-control', style:'margin-left:10px;' %>
               </label>
               <div class="form-inline">
               <% if @account.shop_id.to_i == 1 then %>

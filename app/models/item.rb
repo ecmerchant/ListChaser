@@ -403,15 +403,15 @@ class Item < ApplicationRecord
   end
 
   def self.patrol
-    #出品中の楽天商品を定期監視
+    #出品中の商品を定期監視
     logger.debug("\n\n---------------------------")
-    targets = List.where(status: 'listing').group(:item_id).pluck(:item_id)
-    logger.debug(targets)
+    targets_rakuten = List.where(status: 'listing', shop_id: 1).group(:item_id).pluck(:item_id)
+    logger.debug(targets_rakuten)
     RakutenWebService.configure do |c|
       c.application_id = ENV['RAKUTEN_APP_ID']
     end
 
-    targets.each_slice(100) do |items|
+    targets_rakuten.each_slice(100) do |items|
       res = Hash.new
       item_list = Array.new
       checker = Hash.new
@@ -487,6 +487,34 @@ class Item < ApplicationRecord
         Item.import item_list, on_duplicate_key_update: {constraint_name: :for_upsert_items, columns: targets}
       end
     end
+
+    #ヤフオク
+    targets_yahoo = List.where(status: 'listing', shop_id: 2).group(:item_id).pluck(:item_id)
+
+    ua = CSV.read('app/others/User-Agent.csv', headers: false, col_sep: "\t")
+    targets_yahoo.each_slice(100) do |items|
+      item_list = Array.new
+      items.each do |item_id|
+        url = "https://page.auctions.yahoo.co.jp/jp/auction/" + item_id.to_s
+        option = {
+          "User-Agent" => ua.sample[0]
+        }
+        charset = nil
+        html = open(turl, option) do |f|
+          charset = f.charset
+          f.read
+        end
+
+        if html.include?("このオークションは終了しています") then
+          availability = false
+        else
+          availability = true
+        end
+        item_list << Item.new(item_id: item_id, availability: availability)
+      end
+      Item.import item_list, on_duplicate_key_update: {constraint_name: :for_upsert_items, columns: [:availability]}
+    end
+
   end
 
 end

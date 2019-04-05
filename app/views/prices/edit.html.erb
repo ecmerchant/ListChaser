@@ -5,12 +5,15 @@
         <h3>販売価格テーブルの設定</h3>
         <div class="form-inline">
           <%= form_tag('/prices/edit', method:'post', multipart: true, id:"price_edit") do %>
+            <div class="form-inline">
+            <%= link_to 'テンプレート取得', {:controller => 'prices', :action => 'template', :format => 'xlsx'}, {class: 'btn btn-success', id: 'download_template', style: 'margin-right: 20px;'} %>
             <label style="vertical-align:middle;">
               <span class="btn btn-primary" style="width:220px;">
                 価格テーブルのインポート
                 <input type="file" name="price_edit" onChange="$('#price_edit').submit();" style="display:none">
               </span>
             </label>
+            </div>
           <% end %>
         </div>
         <br>

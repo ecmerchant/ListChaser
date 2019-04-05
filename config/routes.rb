@@ -5,6 +5,7 @@ Rails.application.routes.draw do
   get 'yahoo_auc_searches/setup'
   post 'yahoo_auc_searches/setup'
 
+  get 'prices/template'
   get 'prices/edit'
   post 'prices/edit'
 
