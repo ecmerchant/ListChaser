@@ -75,7 +75,7 @@
             <% if temp.item.converter != nil then %>
               <% if temp.item.converter.product != nil then %>
                 <% amazon_price = temp.item.converter.product.new_price + temp.item.converter.product.new_shipping - temp.item.converter.product.new_point %>
-                <% profit = amazon_price - temp.item.price %>
+                <% profit = amazon_price.to_i - temp.item.price.to_i %>
               <% end %>
             <% end %>
             <tr>

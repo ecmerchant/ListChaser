@@ -14,6 +14,9 @@ Rails.application.routes.draw do
 
   get 'rakuten_searches/setup'
   post 'rakuten_searches/setup'
+  post 'rakuten_searches/edit'
+  post 'rakuten_searches/import'
+  get 'rakuten_searches/template'
 
   get 'list_templates/setup'
   post 'list_templates/setup'

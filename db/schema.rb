@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_04_05_150746) do
+ActiveRecord::Schema.define(version: 2019_04_13_131058) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -31,6 +31,13 @@ ActiveRecord::Schema.define(version: 2019_04_05_150746) do
     t.datetime "inventory_uploaded_at"
     t.string "shop_id", default: "1"
     t.string "progress"
+  end
+
+  create_table "amazon_searches", force: :cascade do |t|
+    t.string "user"
+    t.text "ng_keyword"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "condition_notes", force: :cascade do |t|

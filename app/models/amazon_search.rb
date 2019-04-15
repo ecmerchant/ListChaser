@@ -1,0 +1,2 @@
+class AmazonSearch < ApplicationRecord
+end

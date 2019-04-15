@@ -106,11 +106,16 @@ class Product < ApplicationRecord
     elsif type == 'keyword' then
       #キーワードで検索する場合
       logger.debug("=============== keyword =================")
+
+      ng_words = AmazonSearch.where(user: user).group(:ng_keyword).pluck(:ng_keyword)
       query.each do |squery|
         sleep(6)
         asin = nil
         title = nil
         image = nil
+        ng_words.each do |ng|
+          squery.gsub!(ng, "")
+        end
         response = client.list_matching_products(marketplace, squery)
         parser = response.parse
         parser.each do |product|

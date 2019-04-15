@@ -262,16 +262,15 @@ class Item < ApplicationRecord
           hits = html.scan(/<div class="i">([\s\S]*?)<p class="ft">/)
           if hits[0] == nil then
             logger.debug("----- No -----")
-            logger.debug(html)
             break
           end
         end
         result = nil
         hits.each do |hit|
           src = hit[0]
+          logger.debug('================================')
           logger.debug(src)
-          title = /<h3([\s\S]*?)<\/h3>/.match(src)[1]
-
+          title = /alt="([\s\S]*?)"/.match(src)[1]
           if src.include?('<span class="Product__icon Product__icon--unused">新品</span> ') then
             condition = "New"
           else
@@ -279,14 +278,8 @@ class Item < ApplicationRecord
           end
           availability = false
           if title != nil then
-            url = /href="([\s\S]*?)"/.match(title)[1]
+            url = /href="([\s\S]*?)"/.match(src)[1]
             item_id = /auction\/([\s\S]*?)$/.match(url)[1]
-            if title.include?("<em>") then
-              title = /<em>([\s\S]*?)</.match(title)[1]
-            else
-              title = /<a([\s\S]*?)<\/a/.match(title)[1]
-              title = />([\s\S]*?)$/.match(title)[1]
-            end
             availability = true
           else
             url = ""
@@ -380,6 +373,7 @@ class Item < ApplicationRecord
           Item.import item_list, on_duplicate_key_update: {constraint_name: :for_upsert_items, columns: targets}
         end
 
+        logger.debug('-----Amazon-------')
         Product.search(user, query, 'keyword', amazon_condition)
 
         uhash.each do |key, value|
