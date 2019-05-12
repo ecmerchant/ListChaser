@@ -5,6 +5,35 @@ class PricesController < ApplicationController
     @prices = Price.where(user: user).order("original_price ASC NULLS LAST")
     @login_user = current_user
 
+    if @prices.length == 0 then
+      Price.find_or_create_by(
+        user: user,
+        original_price: 0,
+        convert_price: 100
+      )
+      Price.find_or_create_by(
+        user: user,
+        original_price: 10000,
+        convert_price: 14000
+      )
+      Price.find_or_create_by(
+        user: user,
+        original_price: 20000,
+        convert_price: 26000
+      )
+      Price.find_or_create_by(
+        user: user,
+        original_price: 100000,
+        convert_price: 120000
+      )
+      Price.find_or_create_by(
+        user: user,
+        original_price: 500000,
+        convert_price: 600000
+      )
+
+    end
+
     if request.post? then
       data = params[:price_edit]
       if data != nil then
