@@ -8,14 +8,18 @@ class RakutenSearchesController < ApplicationController
     @headers = {
       keyword: '検索キーワード',
       ng_keyword: '除外キーワード',
-      shop_code: 'ショップID',
-      item_code: 'アイテムID',
       genre_id: 'ジャンルID',
-      tag_id: 'タグID',
-      sort: 'ソート',
       min_price: '最低価格',
       max_price: '最高価格',
       postage_flag: '送料フラグ'
+    }
+    @headers_info = {
+      keyword: 'キーワード',
+      ng_keyword: '除外したいキーワード',
+      genre_id: "ジャンルIDは検索URL内の/category/xxx/のxxxの部分.　<br>例：家電）https://www.rakuten.co.jp/category/562637/の場合は562637",
+      min_price: '最低価格',
+      max_price: '最高価格',
+      postage_flag: "0 :すべての商品, 1 :送料込み／送料無料の商品のみ"
     }
     if request.post? then
       @rakuten_search.update(user_params)

@@ -49,10 +49,15 @@ class PricesController < ApplicationController
         @sheet.add_cell(0, 1, "販売価格")
         @sheet.add_cell(1, 0, 0)
         @sheet.add_cell(1, 1, 100)
-        (1..100).each do |n|
-          @sheet.add_cell(1 + n, 0, 5000 * n)
-          @sheet.add_cell(1 + n, 1, 6000 * n)
-        end
+        @sheet.add_cell(2, 0, 10000)
+        @sheet.add_cell(2, 1, 14000)
+        @sheet.add_cell(3, 0, 20000)
+        @sheet.add_cell(3, 1, 26000)
+        @sheet.add_cell(4, 0, 100000)
+        @sheet.add_cell(4, 1, 120000)
+        @sheet.add_cell(5, 0, 500000)
+        @sheet.add_cell(5, 1, 600000)
+
 
         data = @workbook.stream.read
         timestamp = Time.new.strftime("%Y%m%d%H%M%S")
