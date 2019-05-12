@@ -31,7 +31,7 @@ class PricesController < ApplicationController
         original_price: 500000,
         convert_price: 600000
       )
-
+      @prices = Price.where(user: user).order("original_price ASC NULLS LAST")
     end
 
     if request.post? then
