@@ -21,7 +21,11 @@
               <% @headers.transpose.each do |row| %>
               <% if ["standard-price-points", "quantity", "condition-type", "leadtime-to-ship"].include?(row[2]) then %>
               <tr>
+                <% if row[2] == "standard-price-points" then %>
+                <td class="td_vertical_align_middle" style='width:25%;'>ポイント（販売金額に対する%を記入）<br>10だと販売金額の10%のポイントになる</td>
+                <% else %>
                 <td class="td_vertical_align_middle" style='width:25%;'><%= truncate(row[1]) %></td>
+                <% end %>
                 <td class="td_vertical_align_middle" style='width:25%;'><%= row[2] %></td>
                 <% if @template.find_by(header: row[2]) != nil then init = @template.find_by(header: row[2]).value else init = nil end %>
                 <% if row[2] == "condition-type" then %>
