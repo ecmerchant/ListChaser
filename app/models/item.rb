@@ -239,8 +239,12 @@ class Item < ApplicationRecord
         end
         #logger.debug(html)
         if page == 1 then
+          logger.debug("==============================")
           nr = /の検索結果<\/span>([\s\S]*?)件/.match(html)[1]
-          max_page = (nr.to_i / 100) + 1
+          nr = nr.gsub(",", "")
+          max_page = (nr.to_i / 20) + 1
+          logger.debug(nr.to_i)
+          logger.debug(max_page)
           if max_page > 100 then
             max_page = 100
           end
@@ -248,6 +252,7 @@ class Item < ApplicationRecord
             max_item_num: max_page
           )
         end
+
 
         item_list = Array.new
         user_list = Array.new
