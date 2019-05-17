@@ -240,8 +240,9 @@ class Item < ApplicationRecord
         #logger.debug(html)
         if page == 1 then
           logger.debug("==============================")
-          nr = /の検索結果<\/span>([\s\S]*?)件/.match(html)[1]
+          nr = /検索結果([\s\S]*?)件/.match(html)[1]
           nr = nr.gsub(",", "")
+          nr = nr.strip
           max_page = (nr.to_i / 20) + 1
           logger.debug(nr.to_i)
           logger.debug(max_page)
@@ -271,7 +272,9 @@ class Item < ApplicationRecord
           end
         end
         result = nil
+
         hits.each do |hit|
+
           src = hit[0]
           logger.debug('================================')
           logger.debug(src)
