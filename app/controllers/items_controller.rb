@@ -45,6 +45,10 @@ class ItemsController < ApplicationController
         shop_id: shop_id.to_s,
         progress: "処理受付完了"
       )
+      List.where(user: user, shop_id: @shop_id).where('(status = ?) OR (status = ?)', 'searching', 'before_listing').update_all(
+        status: 'reject'
+      )
+      @items = List.where(user: user, shop_id: @shop_id).where('(status = ?) OR (status = ?)', 'searching', 'before_listing').order('profit DESC NULLS LAST').page(params[:page]).per(PER)
       ItemSearchJob.perform_later(user, keyword, shop_id, amazon_condition)
       #Item.search(user, keyword, shop_id, amazon_condition)
       redirect_to items_search_path

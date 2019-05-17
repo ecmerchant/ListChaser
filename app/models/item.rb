@@ -21,9 +21,9 @@ class Item < ApplicationRecord
       logger.debug("========= RakutenSearch ==========")
       titem = Item.all
 
-      List.where(user: user, status: 'searching', shop_id: shop_id).update(
-        status: 'before_sale'
-      )
+      #List.where(user: user, status: 'searching', shop_id: shop_id).update(
+      #  status: 'before_sale'
+      #)
 
       RakutenWebService.configure do |c|
         c.application_id = ENV['RAKUTEN_APP_ID']
@@ -204,9 +204,9 @@ class Item < ApplicationRecord
     when 2 then
       #ヤフオク
       logger.debug("========= YahooAucSearch ==========")
-      List.where(user: user, status: 'searching', shop_id: shop_id).update(
-        status: 'before_sale'
-      )
+      #List.where(user: user, status: 'searching', shop_id: shop_id).update(
+      #  status: 'before_sale'
+      #)
       org_url = keyword
       if org_url.include?("&n=") == false then
         org_url = org_url + "&n=20"
