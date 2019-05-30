@@ -29,6 +29,8 @@ Rails.application.routes.draw do
   get 'accounts/setup'
   post 'accounts/setup'
 
+  post 'accounts/regist'
+
   get 'items/search'
   post 'items/search'
   post 'items/select'
